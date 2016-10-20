@@ -9,7 +9,8 @@ public enum BuildResult {
     UNSTABLE("was unstable"),
     ABORTED("was aborted"),
     NOT_BUILT("was not built"),
-    FIXED("was fixed");
+    FIXED("was fixed"),
+    BROKEN("was broken");
 
     private String humanResult;
 
@@ -18,8 +19,9 @@ public enum BuildResult {
     }
 
     public static BuildResult fromBuild(AbstractBuild build) {
+        Result prevResult = build.getPreviousBuild() != null ? build.getPreviousBuild().getResult() : null;
+
         if (build.getResult().equals(Result.SUCCESS)) {
-            Result prevResult = build.getPreviousBuild() != null ? build.getPreviousBuild().getResult() : null;
             if (Result.FAILURE.equals(prevResult) || Result.UNSTABLE.equals(prevResult)) {
                 return FIXED;
             }
@@ -31,6 +33,10 @@ public enum BuildResult {
         } else if (build.getResult().equals(Result.NOT_BUILT)) {
             return NOT_BUILT;
         } else {
+            if (!(Result.FAILURE.equals(prevResult) || Result.UNSTABLE.equals(prevResult))) {
+                return BROKEN;
+            }
+
             return FAILURE;
         }
     }

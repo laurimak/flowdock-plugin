@@ -37,12 +37,13 @@ public class FlowdockNotifier extends Notifier {
     private final boolean notifyUnstable;
     private final boolean notifyAborted;
     private final boolean notifyNotBuilt;
+    private final boolean notifyBroken;
 
     // Fields in config.jelly must match the parameter names in the "DataBoundConstructor"
     @DataBoundConstructor
     public FlowdockNotifier(String flowToken, String notificationTags, String chatNotification,
         String notifySuccess, String notifyFailure, String notifyFixed, String notifyUnstable,
-        String notifyAborted, String notifyNotBuilt) {
+        String notifyAborted, String notifyNotBuilt, String notifyBroken) {
         this.flowToken = flowToken;
         this.notificationTags = notificationTags;
         this.chatNotification = chatNotification != null && chatNotification.equals("true");
@@ -53,6 +54,7 @@ public class FlowdockNotifier extends Notifier {
         this.notifyUnstable = notifyUnstable != null && notifyUnstable.equals("true");
         this.notifyAborted = notifyAborted != null && notifyAborted.equals("true");
         this.notifyNotBuilt = notifyNotBuilt != null && notifyNotBuilt.equals("true");
+        this.notifyBroken = "true".equals(notifyBroken);
 
         // set notification map
         this.notifyMap = new HashMap<BuildResult, Boolean>();
@@ -62,6 +64,7 @@ public class FlowdockNotifier extends Notifier {
         this.notifyMap.put(BuildResult.UNSTABLE, this.notifyUnstable);
         this.notifyMap.put(BuildResult.ABORTED, this.notifyAborted);
         this.notifyMap.put(BuildResult.NOT_BUILT, this.notifyNotBuilt);
+        this.notifyMap.put(BuildResult.BROKEN, this.notifyBroken);
     }
 
     public String getFlowToken() {
